@@ -1,49 +1,50 @@
 import { create } from "zustand";
 
-interface CartItem {
+export interface Product {
   id: number;
   title: string;
-  price: number;
   image: string;
+  selling: number;
+}
+
+export interface CartItem extends Product {
   quantity: number;
 }
 
 interface CartState {
   items: CartItem[];
-  addItem: (item: CartItem) => void;
-  removeItem: (id: number) => void;
-  increment: (id: number) => void;
-  decrement: (id: number) => void;
-  clearCart: () => void;
+  addToCart: (product: Product, quantity?: number) => void;
+  removeFromCart: (id: number) => void;
+  incrementQty: (id: number) => void;
+  decrementQty: (id: number) => void;
 }
 
 export const useCartStore = create<CartState>((set) => ({
   items: [],
-  addItem: (item) =>
+  addToCart: (product, quantity = 1) =>
     set((state) => {
-      const existing = state.items.find((i) => i.id === item.id);
-      if (existing) {
+      const exist = state.items.find((i) => i.id === product.id);
+      if (exist) {
         return {
           items: state.items.map((i) =>
-            i.id === item.id ? { ...i, quantity: i.quantity + item.quantity } : i
+            i.id === product.id ? { ...i, quantity: i.quantity + quantity } : i
           ),
         };
       }
-      return { items: [...state.items, item] };
+      return { items: [...state.items, { ...product, quantity }] };
     }),
-  removeItem: (id) =>
+  removeFromCart: (id) =>
     set((state) => ({ items: state.items.filter((i) => i.id !== id) })),
-  increment: (id) =>
+  incrementQty: (id) =>
     set((state) => ({
       items: state.items.map((i) =>
         i.id === id ? { ...i, quantity: i.quantity + 1 } : i
       ),
     })),
-  decrement: (id) =>
+  decrementQty: (id) =>
     set((state) => ({
       items: state.items.map((i) =>
         i.id === id && i.quantity > 1 ? { ...i, quantity: i.quantity - 1 } : i
       ),
     })),
-  clearCart: () => set({ items: [] }),
 }));

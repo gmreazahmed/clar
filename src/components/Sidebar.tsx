@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../api";
+import api from './../api';
 
 interface Category {
   id: number;
@@ -7,7 +7,11 @@ interface Category {
   slug: string;
 }
 
-export default function Sidebar({ onSelectCategory }: { onSelectCategory: (id: number) => void }) {
+interface SidebarProps {
+  onSelectCategory: (id: number) => void;
+}
+
+export default function Sidebar({ onSelectCategory }: SidebarProps) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -15,14 +19,14 @@ export default function Sidebar({ onSelectCategory }: { onSelectCategory: (id: n
   useEffect(() => {
     api
       .get("/common")
-      .then((res) => {
+      .then((res: { data: { data: { categories: Category[] } } }) => {
         if (Array.isArray(res.data?.data?.categories)) {
           setCategories(res.data.data.categories);
         } else {
           setError("Invalid category data format");
         }
       })
-      .catch((err) => {
+      .catch((err: any) => {
         console.error(err);
         setError("Failed to load categories");
       })

@@ -12,7 +12,6 @@ interface Address {
 
 const AddressPage = () => {
   const [addresses, setAddresses] = useState<Address[]>([]);
-  const [loading, setLoading] = useState(false);
   const [newAddress, setNewAddress] = useState({ line1: "", city: "", country: "", phone: "" });
   const token = useAuthStore((state) => state.token);
 
